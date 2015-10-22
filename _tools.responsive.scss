@@ -31,21 +31,28 @@ $inuit-responsive-settings: false !default;
 
 @mixin media-query($mq) {
 
-    $breakpoint-found: false;
+    // Use $breakpoints if $media-queries has not been defined to provide
+    // backwards compatibility.
+    @if not global-variable-exists(media-queries) {
+      $media-queries: $breakpoints;
+    }
+    
+    $media-query-found: false;
 
-    // Loop through the list of breakpoints we’ve provided in our settings file.
-    @each $breakpoint in $breakpoints {
+    // Loop through the list of media queries we’ve provided in our settings
+    // file.
+    @each $media-query in $media-queries {
 
         // Grab the alias and the condition from their respective locations in
         // the list.
-        $alias:     nth($breakpoint, 1);
-        $condition: nth($breakpoint, 2);
+        $alias:     nth($media-query, 1);
+        $condition: nth($media-query, 2);
 
         // If the media query we’ve specified has an alias and a condition...
         @if $mq == $alias and $condition {
 
             // ...tell the mixin that we’ve found it...
-            $breakpoint-found: true;
+            $media-query-found: true;
 
             // ...and spit it out here.
             @media #{$condition} {
@@ -57,8 +64,8 @@ $inuit-responsive-settings: false !default;
     }
 
     // If the user specifies a non-exitent alias, send them a warning.
-    @if $breakpoint-found == false{
-        @warn "Oops! Breakpoint ‘#{$mq}’ does not exist."
+    @if $media-query-found == false{
+        @warn "Oops! Media query ‘#{$mq}’ does not exist."
     }
 
 }
